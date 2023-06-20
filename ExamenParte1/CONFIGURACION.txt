@@ -1,0 +1,3 @@
+usuario:admin
+contraseña:123456
+llaveMD5:nomina

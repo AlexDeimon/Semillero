@@ -1,0 +1,80 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CAB001.
+
+      *    AUTOR  : HUGO CENDALES P
+      *    FECHA  : ABRIL 05 2021
+      *    DESCR  : LEER ARCHIVO Y MOSTRAR CONTENIDO
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+
+
+      * ARCHIVO DE ENTRADA
+           SELECT BG070SE    ASSIGN TO SYS002-DA-FBA1-S-BG070SE
+                             FILE STATUS EST-BG07E.
+
+
+       DATA DIVISION.
+       FILE SECTION.
+
+      * ESTRUCTURA DE ARCHIVO
+       FD  BG070SE LABEL RECORD STANDARD.
+       01  REG-BG070SE PIC X(566).
+
+       WORKING-STORAGE SECTION.
+      * VARIABLES
+       01  EST-BG07E    PIC XX VALUE ZEROS.
+       01  NRO-BG070SE  PIC 9(7) VALUE ZEROS.
+
+
+       PROCEDURE DIVISION.
+           PERFORM 010-INICIALIZAR THRU 010-FIN.
+
+           PERFORM 020-PROCESO THRU 020-FIN
+             UNTIL EST-BG07E NOT = '00'.
+
+           DISPLAY 'LEIDOS BG070SE : ' NRO-BG070SE.
+           DISPLAY 'TERMINACION OK'.
+
+           CLOSE BG070SE.
+           STOP RUN.
+
+       010-INICIALIZAR.
+
+           OPEN INPUT BG070SE.
+           IF EST-BG07E NOT = '00' AND EST-BG07E NOT = '35'
+              DISPLAY 'ERROR AL ABRIR BG070SE ' EST-BG07E
+              MOVE 999 TO RETURN-CODE
+              STOP RUN
+           END-IF.
+
+           IF EST-BG07E = '00'
+              PERFORM 100-LEER-BG070SE THRU 100-FIN
+           END-IF.
+
+       010-FIN.
+           EXIT.
+
+       020-PROCESO.
+           DISPLAY REG-BG070SE.
+           PERFORM 100-LEER-BG070SE THRU 100-FIN.
+       020-FIN.
+           EXIT.
+
+       100-LEER-BG070SE.
+           READ BG070SE NEXT RECORD.
+
+           IF EST-BG07E NOT = '00' AND EST-BG07E NOT = '10'
+              DISPLAY 'ERROR LEYENDO BG070SE ' EST-BG07E
+              MOVE 999 TO RETURN-CODE
+              STOP RUN
+           END-IF.
+
+           IF EST-BG07E = '00'
+              ADD 1 TO NRO-BG070SE
+           END-IF.
+
+       100-FIN.
+           EXIT.
